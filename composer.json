@@ -1,0 +1,14 @@
+{
+    "name": "prontotype/pipeline",
+    "require": {
+        "symfony/yaml": "^2.6",
+        "league/commonmark": "^0.8.0",
+        "allmarkedup/sup": "^0.2.6",
+        "mustache/mustache": "^2.8"
+    },
+    "autoload": {
+        "psr-4": {
+            "Prontotype\\Pipeline\\": "src/"
+        }
+    }
+}
