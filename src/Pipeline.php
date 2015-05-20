@@ -5,6 +5,8 @@ use Prontotype\Pipeline\Input\InputInterface;
 use Prontotype\Pipeline\Output\DirectoryOutput;
 use Prontotype\Pipeline\Output\OutputInterface;
 use Prontotype\Pipeline\Pipe\PipeInterface;
+use Prontotype\Pipeline\Support\Collection;
+use Prontotype\Pipeline\Pipe;
 
 class Pipeline implements \IteratorAggregate
 {
@@ -12,16 +14,26 @@ class Pipeline implements \IteratorAggregate
     protected $input;
 
     /** @var array */
-    protected $data;    
+    protected $data;
+
+    protected $defaultPipes = [
+        'Prontotype\Pipeline\Pipe\YamlFrontMatterPipe',
+        'Prontotype\Pipeline\Pipe\IdGeneratorPipe',
+        'Prontotype\Pipeline\Pipe\TitleGeneratorPipe'
+    ];
 
     public function __construct($input)
     {
         $this->input = $input instanceof InputInterface ? $input : new DirectoryInput($input);
         $this->data = $this->input->data();
+        $this->processDefaultPipes();
     }
 
-    public function pipe(PipeInterface $pipe)
+    public function pipe($pipe)
     {
+        if (! $pipe instanceof PipeInterface) {
+            $pipe = new $pipe();
+        }
         $pipe->process($this->data);
         return $this;
     }
@@ -33,7 +45,7 @@ class Pipeline implements \IteratorAggregate
 
     public function merge(Pipeline $pipeline)
     {
-        $this->data = $this->data->merge($pipeline->data);
+        $this->data->merge($pipeline->data());
         return $this;
     }
 
@@ -47,6 +59,13 @@ class Pipeline implements \IteratorAggregate
     public function getIterator()
     {
         return new \ArrayIterator($this->data->toArray());
+    }
+
+    protected function processDefaultPipes()
+    {
+        foreach($this->defaultPipes as $pipe) {
+            $this->pipe($pipe);
+        }
     }
 
 }

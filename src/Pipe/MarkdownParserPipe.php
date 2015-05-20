@@ -17,7 +17,7 @@ class MarkdownParserPipe implements PipeInterface
     }
     
     public function process(Collection &$data)
-    {
+    {        
         $data->each(function($item, $key){
             if ($this->isMarkdown($item)) {
                 $content = $this->converter->convertToHtml($item->get('content'));

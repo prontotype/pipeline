@@ -13,12 +13,15 @@ class YamlFrontMatterPipe implements PipeInterface
     }
 
     public function process(Collection &$data)
-    {
+    {        
         $data->each(function($item, $key){
             list($metadata, $body) = $this->getParts($item->get('raw'));
+            foreach($metadata as $key => $value) {
+                $item->set($key, $value);
+            }
             $item->set('metadata', $metadata);
             $item->set('content', $body);
-        });
+        });   
     }
 
     protected function getParts($rawContent)

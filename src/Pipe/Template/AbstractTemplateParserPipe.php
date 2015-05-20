@@ -16,20 +16,23 @@ abstract class AbstractTemplateParserPipe implements PipeInterface
         $this->globals = $globals;
     }
 
-    abstract protected function parse($content);
+    abstract protected function parse($content, $item, $context);
 
     public function process(Collection &$data)
     {
-        $data->each(function($item, $key){
+        $data->each(function($item, $key) use ($data) {
             if ($this->filter($item)) {
-                $item->set('content', $this->parse($item->get('content')));
+                $item->set('content', $this->parse($item->get('content'), $item, $data));
             }
         });
     }
 
-    protected function data()
+    protected function data($item, $context)
     {
-        return $this->globals;
+        $data = array_merge([], $this->globals, $item->toArray());
+        // $data['context'] = $context->toArray();
+        $data['self'] = $item->toArray();
+        return $data;
     }
 
     protected function filter($item)

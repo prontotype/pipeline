@@ -8,7 +8,7 @@ abstract class AbstractFilterPipe implements PipeInterface
 {
     public function process(Collection &$data)
     {
-        $data = $data->filter(function($item){
+        $data = $data->get('files', new Collection())->filter(function($item){
             return $this->check($item);
         });
     }

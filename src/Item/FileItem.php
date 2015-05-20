@@ -1,6 +1,7 @@
 <?php namespace Prontotype\Pipeline\Item;
 
 use Amu\Sup\Str;
+use Amu\Sup\path;
 use Prontotype\Pipeline\Support\ArrayableInterface;
 
 class FileItem extends AbstractItem
@@ -23,9 +24,7 @@ class FileItem extends AbstractItem
         $contents = file_get_contents($this->file->getPathname());
         $this['raw']        = $contents;
         $this['content']    = $contents;
-        $this['is_dir']     = $this->file->isDir();
-        $this['is_file']    = $this->file->isFile();
-        $this['filename']   = $this->file->getFilename();
+        $this['filename']   = str_replace('.' . $this->file->getExtension(), '', $this->file->getBasename());
         $this['extension']  = strtolower($this->file->getExtension());
         $this['basename']   = $this->file->getBasename();
         $this['mtime']      = $this->file->getMTime();
@@ -33,6 +32,8 @@ class FileItem extends AbstractItem
         $this['pathname']   = $this->file->getPathname();
         $this['rel_path']   = $this->makeRelPath($this->file->getPath());
         $this['rel_pathname'] = $this->makeRelPath($this->file->getPathname());
+        $this['rel_depth']  = count(explode('/', $this['rel_path']));
+        $this['metadata']   = [];
     }
 
     protected function makeRelPath($path)

@@ -20,27 +20,32 @@ abstract class AbstractItem implements \ArrayAccess, ArrayableInterface, ItemInt
 
     public function set($key, $value)
     {
-        $this->offsetSet($key, $value);
+        Arr::set($this->data, $key, $this->value($value));
         return $this;
     }
 
-    public function offsetSet($offset, $value)
+    public function offsetSet($key, $value)
     {
-        $this->data[$offset] = $value;
+        $this->set($key, $value);
     }
 
-    public function offsetExists($offset)
+    public function offsetExists($key)
     {
-        return array_key_exists($offset, $this->data);
+        return array_key_exists($key, $this->data);
     }
 
-    public function offsetUnset($offset)
+    public function offsetUnset($key)
     {
-        unset($this->data[$offset]);
+        unset($this->data[$key]);
     }
 
-    public function offsetGet($offset)
+    public function offsetGet($key)
     {
-        return $this->data[$key];
+        return $this->get($key);
+    }
+
+    protected function value($value)
+    {
+        return $value instanceof \Closure ? $value() : $value;
     }
 }

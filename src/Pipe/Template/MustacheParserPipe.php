@@ -5,11 +5,11 @@ use Prontotype\Pipeline\Support\Collection;
 
 class MustacheParserPipe extends AbstractTemplateParserPipe
 {
-    protected $accept = ['mustache'];
+    protected $accept = ['mustache','html'];
 
-    protected function parse($content)
+    protected function parse($content, $item, $context)
     {
         $m = new Mustache;
-        return $m->render($content, $this->data());
+        return $m->render($content, $this->data($item, $context));
     }
 }
